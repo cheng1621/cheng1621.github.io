@@ -1,0 +1,1177 @@
+<!DOCTYPE html><html lang="en" ><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="theme" content="Chirpy v2.5.1"><meta name="generator" content="Jekyll v4.2.0" /><meta property="og:title" content="6.824 Lab2B" /><meta name="author" content="BenchengSu" /><meta property="og:locale" content="en_US" /><meta name="description" content="Preparation. Raft paper Raft Explanation" /><meta property="og:description" content="Preparation. Raft paper Raft Explanation" /><link rel="canonical" href="https://cheng1621.github.io/posts/6824-lab2B/" /><meta property="og:url" content="https://cheng1621.github.io/posts/6824-lab2B/" /><meta property="og:site_name" content="HelloMike" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2020-12-26T01:21:10+08:00" /><meta name="twitter:card" content="summary" /><meta property="twitter:title" content="6.824 Lab2B" /><meta name="twitter:site" content="@twitter_username" /><meta name="twitter:creator" content="@BenchengSu" /><meta name="google-site-verification" content="google_meta_tag_verification" /> <script type="application/ld+json"> {"description":"Preparation. Raft paper Raft Explanation","headline":"6.824 Lab2B","dateModified":"2020-12-26T01:21:10+08:00","datePublished":"2020-12-26T01:21:10+08:00","@type":"BlogPosting","url":"https://cheng1621.github.io/posts/6824-lab2B/","mainEntityOfPage":{"@type":"WebPage","@id":"https://cheng1621.github.io/posts/6824-lab2B/"},"author":{"@type":"Person","name":"BenchengSu"},"@context":"https://schema.org"}</script><title>6.824 Lab2B | HelloMike</title><link rel="shortcut icon" href="/assets/img/favicons/favicon.ico" type="image/x-icon"><link rel="icon" href="/assets/img/favicons/favicon.ico" type="image/x-icon"><link rel="apple-touch-icon" href="/assets/img/favicons/apple-icon.png"><link rel="apple-touch-icon" href="/assets/img/favicons/apple-icon-precomposed.png"><link rel="apple-touch-icon" sizes="57x57" href="/assets/img/favicons/apple-icon-57x57.png"><link rel="apple-touch-icon" sizes="60x60" href="/assets/img/favicons/apple-icon-60x60.png"><link rel="apple-touch-icon" sizes="72x72" href="/assets/img/favicons/apple-icon-72x72.png"><link rel="apple-touch-icon" sizes="76x76" href="/assets/img/favicons/apple-icon-76x76.png"><link rel="apple-touch-icon" sizes="114x114" href="/assets/img/favicons/apple-icon-114x114.png"><link rel="apple-touch-icon" sizes="120x120" href="/assets/img/favicons/apple-icon-120x120.png"><link rel="apple-touch-icon" sizes="144x144" href="/assets/img/favicons/apple-icon-144x144.png"><link rel="apple-touch-icon" sizes="152x152" href="/assets/img/favicons/apple-icon-152x152.png"><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-icon-180x180.png"><link rel="icon" type="image/png" sizes="192x192" href="/assets/img/favicons/android-icon-192x192.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicons/favicon-96x96.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png"><link rel="manifest" href="/assets/img/favicons/manifest.json"><meta name='msapplication-config' content='/assets/img/favicons/browserconfig.xml'><meta name="msapplication-TileColor" content="#ffffff"><meta name="msapplication-TileImage" content="/assets/img/favicons/ms-icon-144x144.png"><meta name="theme-color" content="#ffffff"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://fonts.gstatic.com"><link rel="preconnect" href="https://www.google-analytics.com" crossorigin="use-credentials"><link rel="dns-prefetch" href="https://www.google-analytics.com"><link rel="preconnect" href="https://www.googletagmanager.com" crossorigin="anonymous"><link rel="dns-prefetch" href="https://www.googletagmanager.com"><link rel="preconnect" href="cdn.jsdelivr.net"><link rel="dns-prefetch" href="cdn.jsdelivr.net"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha256-LA89z+k9fjgMKQ/kq4OO2Mrf8VltYml/VES+Rg0fh20=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css" integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ=" crossorigin="anonymous"><link rel="preload" as="style" href="/assets/css/post.css"><link rel="stylesheet" href="/assets/css/post.css"><link rel="preload" as="style" href="/assets/css/lib/bootstrap-toc.min.css"><link rel="stylesheet" href="/assets/css/lib/bootstrap-toc.min.css" /> <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script> <script async src="https://cdn.jsdelivr.net/combine/npm/popper.js@1.15.0,npm/bootstrap@4/dist/js/bootstrap.min.js"></script> <script async src="/assets/js/post.min.js"></script> <script defer src="/app.js"></script><body data-spy="scroll" data-target="#toc"><div id="sidebar" class="d-flex flex-column"><div id="nav-wrapper"><div id="profile-wrapper" class="d-flex flex-column"><div id="avatar" class="d-flex justify-content-center"> <a href="/" alt="avatar"> <img src="/assets/img/sample/avatar.jpg" alt="avatar" onerror="this.style.display='none'"> </a></div><div class="profile-text mt-3"><div class="site-title"> <a href="/">HelloMike</a></div><div class="site-subtitle font-italic">Try everything.</div></div></div><ul class="nav flex-column"><li class="nav-item d-flex justify-content-center "> <a href="/" class="nav-link d-flex justify-content-center align-items-center w-100"> <i class="fa-fw fas fa-home ml-xl-3 mr-xl-3 unloaded"></i> <span>HOME</span> </a><li class="nav-item d-flex justify-content-center "> <a href="/tabs/categories/" class="nav-link d-flex justify-content-center align-items-center w-100"> <i class="fa-fw fas fa-stream ml-xl-3 mr-xl-3 unloaded"></i> <span>CATEGORIES</span> </a><li class="nav-item d-flex justify-content-center "> <a href="/tabs/tags/" class="nav-link d-flex justify-content-center align-items-center w-100"> <i class="fa-fw fas fa-tags ml-xl-3 mr-xl-3 unloaded"></i> <span>TAGS</span> </a><li class="nav-item d-flex justify-content-center "> <a href="/tabs/archives/" class="nav-link d-flex justify-content-center align-items-center w-100"> <i class="fa-fw fas fa-archive ml-xl-3 mr-xl-3 unloaded"></i> <span>ARCHIVES</span> </a><li class="nav-item d-flex justify-content-center "> <a href="/tabs/about/" class="nav-link d-flex justify-content-center align-items-center w-100"> <i class="fa-fw fas fa-info ml-xl-3 mr-xl-3 unloaded"></i> <span>ABOUT</span> </a></ul></div><div class="sidebar-bottom d-flex flex-wrap justify-content-around mt-4"> <span id="mode-toggle-wrapper"> <i class="mode-toggle fas fa-sun" dark-mode-invisible></i> <i class="mode-toggle fas fa-moon" light-mode-invisible></i> <script type="text/javascript"> class ModeToggle { static get MODE_KEY() { return "mode"; } static get DARK_MODE() { return "dark"; } static get LIGHT_MODE() { return "light"; } constructor() { if (this.mode != null) { if (this.mode == ModeToggle.DARK_MODE) { if (!this.isSysDarkPrefer) { this.setDark(); } } else { if (this.isSysDarkPrefer) { this.setLight(); } } } var self = this; /* always follow the system prefers */ this.sysDarkPrefers.addListener(function() { if (self.mode != null) { if (self.mode == ModeToggle.DARK_MODE) { if (!self.isSysDarkPrefer) { self.setDark(); } } else { if (self.isSysDarkPrefer) { self.setLight(); } } self.clearMode(); } }); } /* constructor() */ setDark() { $('html').attr(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE); } setLight() { $('html').attr(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE); } clearMode() { $('html').removeAttr(ModeToggle.MODE_KEY); sessionStorage.removeItem(ModeToggle.MODE_KEY); } get sysDarkPrefers() { return window.matchMedia("(prefers-color-scheme: dark)"); } get isSysDarkPrefer() { return this.sysDarkPrefers.matches; } get isDarkMode() { return this.mode == ModeToggle.DARK_MODE; } get isLightMode() { return this.mode == ModeToggle.LIGHT_MODE; } get hasMode() { return this.mode != null; } get mode() { return sessionStorage.getItem(ModeToggle.MODE_KEY); } flipMode() { if (this.hasMode) { if (this.isSysDarkPrefer) { if (this.isLightMode) { this.clearMode(); } else { this.setLight(); } } else { if (this.isDarkMode) { this.clearMode(); } else { this.setDark(); } } } else { if (this.isSysDarkPrefer) { this.setLight(); } else { this.setDark(); } } } /* flipMode() */ } /* ModeToggle */ let toggle = new ModeToggle(); $(".mode-toggle").click(function() { toggle.flipMode(); }); </script> </span> <span class="icon-border"></span> <a href="https://github.com/cheng1621" aria-label="github" target="_blank" rel="noopener"> <i class="fab fa-github-alt"></i> </a> <a href="https://twitter.com/twitter_username" aria-label="twitter" target="_blank" rel="noopener"> <i class="fab fa-twitter"></i> </a> <a href=" javascript:location.href = 'mailto:' + ['subencheng','gmail.com'].join('@')" aria-label="email" > <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss" > <i class="fas fa-rss"></i> </a></div></div><div id="topbar-wrapper" class="row justify-content-center topbar-down"><div id="topbar" class="col-11 d-flex h-100 align-items-center justify-content-between"> <span id="breadcrumb"> <span> <a href="/"> Posts </a> </span> <span>6.824 Lab2B</span> </span> <i id="sidebar-trigger" class="fas fa-bars fa-fw"></i><div id="topbar-title"> Post</div><i id="search-trigger" class="fas fa-search fa-fw"></i> <span id="search-wrapper" class="align-items-center"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" placeholder="Search..."> <i class="fa fa-times-circle fa-fw" id="search-cleaner"></i> </span> <span id="search-cancel" >Cancel</span></div></div><div id="main-wrapper"><div id="main"><div class="row"><div id="post-wrapper" class="col-12 col-lg-11 col-xl-8"><div class="post pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4"><h1 data-toc-skip>6.824 Lab2B</h1><div class="post-meta text-muted d-flex flex-column"><div> Posted <span class="timeago " data-toggle="tooltip" data-placement="bottom" title="Sat, Dec 26, 2020, 1:21 AM +0800" > Dec 26, 2020 <i class="unloaded">2020-12-26T01:21:10+08:00</i> </span> by <span class="author"> BenchengSu </span></div></div><div class="post-content"><h1 id="preparation">Preparation.</h1><ul><li><a href="https://pdos.csail.mit.edu/6.824/papers/raft-extended.pdf">Raft paper</a><li><a href="https://www.cs.princeton.edu/courses/archive/fall18/cos418/docs/p7-raft.pdf">Raft Explanation</a></ul><h1 id="some-details-about-raft-explanationthe-link-above">Some details about Raft Explanation.(the link above)</h1><p>Actually, I know the big picture of the Raft consenus algorithm from the link above. Then I implement my code following the graph and I think there is something needed to be detailed here.</p><ol><li>When state is changed from Leader to Follower, there is no need to make the <code class="language-plaintext highlighter-rouge">nextIndex</code> and <code class="language-plaintext highlighter-rouge">matchIndex</code> empty.<li>Although you can replicate majority of entries on servers, you still should implement the <code class="language-plaintext highlighter-rouge">applyCh</code>, because the tester know the committed log entries from that channel.</ol><h1 id="some-advices">Some Advices.</h1><ol><li>Figure 2 is extremely precise, and every single statement it makes should be treated, in specification terms, as <code class="language-plaintext highlighter-rouge">MUST</code>, not as <code class="language-plaintext highlighter-rouge">SHOULD</code>.<li>Even though you’ve passed Lab2A for many times by <code class="language-plaintext highlighter-rouge">go test -run 2A</code>, you should pass <code class="language-plaintext highlighter-rouge">go test -race -run 2A</code> before you move on to lab2B.<li>When you have some problems about some parts in lab2B, maybe your code about log replication is fine and there is something wrong in Leader election(lab2A). Please look though all the code again.<li>When you are debugging your raft code, you can use <code class="language-plaintext highlighter-rouge">DPrintf</code> everywhere, not just <code class="language-plaintext highlighter-rouge">raft.go</code>. For my code, <code class="language-plaintext highlighter-rouge">DPrintf</code> is used in <code class="language-plaintext highlighter-rouge">test_test.go</code> to help find where the bug is.</ol><h1 id="some-terminologies">Some Terminologies.</h1><p><code class="language-plaintext highlighter-rouge">Committed</code>:</p><blockquote><p>A log entry is committed once the leader that created the entry has replicated it on a majority of the servers (e.g., entry 7 in Figure 6). This also commits all preceding entries in the leader’s log, including entries created by previous leaders.</p></blockquote><p><code class="language-plaintext highlighter-rouge">up-to-date</code>:</p><blockquote><p>Raft determines which of two logs is more up-to-date by comparing the index and term of the last entries in the logs. If the logs have last entries with different terms, then the log with the later term is more up-to-date. If the logs end with the same term, then whichever log is longer is more up-to-date.</p></blockquote><h1 id="explanation">Explanation:</h1><p><code class="language-plaintext highlighter-rouge">Start()</code>: create a new log entry and append it to local <code class="language-plaintext highlighter-rouge">Log[]</code>. Log replication is through <strong>AppendEntries</strong>.<br /> <code class="language-plaintext highlighter-rouge">commitIndex</code>: It is not equal to <code class="language-plaintext highlighter-rouge">len(rf.log)</code>. It is determined by highest log entry on majority of servers.<br /> <code class="language-plaintext highlighter-rouge">lastApplied</code>: Commit log entry and put it to <code class="language-plaintext highlighter-rouge">applyCh</code> channel.<br /> <code class="language-plaintext highlighter-rouge">nextIndex</code>: Although some sources said that nextIndex could be different, I just initialize it to the same as <code class="language-plaintext highlighter-rouge">len(log)</code>, it could be changed.<br /> <code class="language-plaintext highlighter-rouge">matchIndex</code>: if executing successfully, it is equal to <code class="language-plaintext highlighter-rouge">nextIndex - 1</code>.<br /> <code class="language-plaintext highlighter-rouge">prevLogIndex</code>: equal to <code class="language-plaintext highlighter-rouge">nextIndex - 1</code>.<br /> <code class="language-plaintext highlighter-rouge">entries[]</code>: it is not all the log entries in the local log. it represents Log Entries which needed to be replicated on Follower. This field could be different when sending <strong>AppendEntrie</strong> to different servers.<br /> <code class="language-plaintext highlighter-rouge">lastLogIndex</code>: Candidate: <code class="language-plaintext highlighter-rouge">len(rf.log)</code>.</p><h1 id="result">Result</h1><p><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7 " data-src="https://raw.githubusercontent.com/cheng1621/HelloMike.github.io/master/assets/img/sample/6824_lab2B_result.png" alt="Result" /></p><h1 id="code">Code:</h1><p>Advice: you should implement your own code before looking over my code.</p><div class="language-plaintext highlighter-rouge"><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449
+450
+451
+452
+453
+454
+455
+456
+457
+458
+459
+460
+461
+462
+463
+464
+465
+466
+467
+468
+469
+470
+471
+472
+473
+474
+475
+476
+477
+478
+479
+480
+481
+482
+483
+484
+485
+486
+487
+488
+489
+490
+491
+492
+493
+494
+495
+496
+497
+498
+499
+500
+501
+502
+503
+504
+505
+506
+507
+508
+509
+510
+511
+512
+513
+514
+515
+516
+517
+518
+519
+520
+521
+522
+523
+524
+525
+526
+527
+528
+529
+530
+531
+532
+533
+534
+535
+536
+537
+538
+539
+540
+541
+542
+543
+544
+545
+546
+547
+548
+549
+550
+551
+552
+553
+554
+555
+556
+557
+558
+559
+560
+561
+562
+563
+564
+565
+566
+567
+568
+569
+570
+571
+572
+573
+574
+575
+576
+577
+578
+579
+580
+581
+582
+583
+584
+585
+586
+587
+588
+</pre><td class="rouge-code"><pre>package raft
+
+//
+// this is an outline of the API that raft must expose to
+// the service (or tester). see comments below for
+// each of these functions for more details.
+//
+// rf = Make(...)
+//   create a new Raft server.
+// rf.Start(command interface{}) (index, term, isleader)
+//   start agreement on a new log entry
+// rf.GetState() (term, isLeader)
+//   ask a Raft for its current term, and whether it thinks it is leader
+// ApplyMsg
+//   each time a new entry is committed to the log, each Raft peer
+//   should send an ApplyMsg to the service (or tester)
+//   in the same server.
+//
+
+import "sync"
+import "sync/atomic"
+import "../labrpc"
+
+// new import.
+import "time"
+import "math/rand"
+// import "bytes"
+// import "../labgob"s
+
+// 3 states for servers.
+const Leader = 0
+const Candidate = 1
+const Follower = 2
+
+//
+// as each Raft peer becomes aware that Successive log entries are
+// committed, the peer should send an ApplyMsg to the service (or
+// tester) on the same server, via the applyCh passed to Make(). set
+// CommandValid to true to indicate that the ApplyMsg contains a newly
+// committed log entry.
+//
+// in Lab 3 you'll want to send other kinds of messages (e.g.,
+// snapshots) on the applyCh; at that point you can add fields to
+// ApplyMsg, but set CommandValid to false for these other uses.
+//
+type ApplyMsg struct {
+	CommandValid bool
+	Command      interface{}
+	CommandIndex int
+}
+
+//
+// A Go object implementing a single Raft peer.
+//
+
+type Raft struct {
+	mu        sync.Mutex          // Lock to protect shared access to this peer's state
+	peers     []*labrpc.ClientEnd // RPC end points of all peers
+	persister *Persister          // Object to hold this peer's persisted state
+	me        int                 // this peer's index into peers[]
+	dead      int32               // set by Kill()
+
+	// Your data here (2A, 2B, 2C).
+	// Look at the paper's Figure 2 for a description of what
+	// state a Raft server must maintain.
+	// (new).
+	state int
+	Time time.Time
+	VoteCount int
+	Timeout int
+	// (new) end
+
+	currentTerm int
+	VoteFor int
+	log []LogEntry
+
+	commitIndex int
+	lastApplied int
+	
+	nextIndex []int
+	matchIndex []int
+
+	applyCh chan ApplyMsg
+}
+
+// return currentTerm and whether this server
+// believes it is the leader.
+func (rf *Raft) GetState() (int, bool) {
+
+	var term int
+	var isleader bool
+	// Your code here (2A).
+	rf.mu.Lock()
+	defer rf.mu.Unlock()
+	term = rf.currentTerm
+	if rf.state == 0 {
+		isleader = true
+	}
+	return term, isleader
+}
+
+//
+// save Raft's persistent state to stable storage,
+// where it can later be retrieved after a crash and restart.
+// see paper's Figure 2 for a description of what should be persistent.
+//
+func (rf *Raft) persist() {
+	// Your code here (2C).
+	// Example:
+	// w := new(bytes.Buffer)
+	// e := labgob.NewEncoder(w)
+	// e.Encode(rf.xxx)
+	// e.Encode(rf.yyy)
+	// data := w.Bytes()
+	// rf.persister.SaveRaftState(data)
+}
+
+
+//
+// restore previously persisted state.
+//
+func (rf *Raft) readPersist(data []byte) {
+	if data == nil || len(data) &lt; 1 { // bootstrap without any state?
+		return
+	}
+	// Your code here (2C).
+	// Example:
+	// r := bytes.NewBuffer(data)
+	// d := labgob.NewDecoder(r)
+	// var xxx
+	// var yyy
+	// if d.Decode(&amp;xxx) != nil ||
+	//    d.Decode(&amp;yyy) != nil {
+	//   error...
+	// } else {
+	//   rf.xxx = xxx
+	//   rf.yyy = yyy
+	// }
+}
+
+
+// (2A) structure log entries.
+type LogEntry struct {
+	Term int 
+	Command interface{}  // still don't know about the command.
+}
+
+// (2A) AppendEntries structure.
+type AppendEntriesArgs struct {
+	Term int
+	LeaderId int
+	PrevLogIndex int
+	PrevLogTerm int
+	Entries []LogEntry
+	LeaderCommit int
+}
+type AppendEntriesReply struct {
+	Term int
+	Success bool
+}
+
+// (2A) AppendEntries Handler.
+func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply){
+	rf.mu.Lock()
+	defer rf.mu.Unlock()
+	rf.Time = time.Now()
+	if args.Term &lt; rf.currentTerm {
+		reply.Term = rf.currentTerm
+		reply.Success = false
+		return
+	} 
+	// (2B.)
+	// (2B).Figure 2: AppendEntries RPC, implementation 2. something
+	if args.Term &gt; rf.currentTerm {
+		rf.currentTerm = args.Term
+		rf.convertToFollower()
+	}
+	if len(rf.log) - 1 &lt; args.PrevLogIndex {
+		reply.Term = rf.currentTerm
+		reply.Success = false
+		return
+	}
+	if args.PrevLogIndex &lt; len(rf.log) &amp;&amp; rf.log[args.PrevLogIndex].Term != args.PrevLogTerm {
+		reply.Term = rf.currentTerm
+		reply.Success = false
+		return
+	}
+	// implementation 3 &amp; implementation 4. delete existing entry if conflict happens
+	index := -1
+	for i := 0;i &lt; len(args.Entries);i++{
+		if len(rf.log) &lt; (args.PrevLogIndex + 2 + i) || rf.log[args.PrevLogIndex + 1 + i].Term != args.Entries[i].Term{
+			index = i
+			break
+		}
+	}
+	if index != -1 {
+		rf.log = rf.log[:index + args.PrevLogIndex + 1]
+		for i := index;i &lt; len(args.Entries);i++{
+			rf.log = append(rf.log,args.Entries[i])
+		}
+	} 
+	
+	// implementation 5.
+	if args.LeaderCommit &gt; rf.commitIndex {
+		rf.Commit(min(args.LeaderCommit,len(rf.log) - 1))
+	}
+	
+	reply.Term = rf.currentTerm
+	reply.Success = true
+}
+
+func (rf *Raft) sendAppendEntries(server int,args *AppendEntriesArgs, reply *AppendEntriesReply) bool {
+	ok := rf.peers[server].Call("Raft.AppendEntries", args, reply)
+	return ok
+}
+
+
+//
+// example RequestVote RPC arguments structure.
+// field names must start with capital letters!
+//
+type RequestVoteArgs struct {
+	// Your data here (2A, 2B).
+	Term int
+	CandidateId int 
+	LastLogIndex int
+	LastLogTerm int
+}
+
+//
+// example RequestVote RPC reply structure.
+// field names must start with capital letters!
+//
+type RequestVoteReply struct {
+	// Your data here (2A).
+	Term int
+	VoteGranted bool
+}
+
+//
+// example RequestVote RPC handler.
+//
+func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply){
+	// Your code here (2A, 2B).
+	rf.mu.Lock()
+	defer rf.mu.Unlock()
+	
+	if args.Term &lt; rf.currentTerm {
+		reply.Term = rf.currentTerm
+		reply.VoteGranted = false;
+		return
+	}
+	if args.Term &gt; rf.currentTerm {
+		rf.currentTerm = args.Term
+		rf.convertToFollower()
+	}
+	if rf.VoteFor == -1 || rf.VoteFor == args.CandidateId {
+		// (2B. leader election.)
+		if args.LastLogTerm &gt; rf.log[len(rf.log) - 1].Term {
+			rf.VoteFor = args.CandidateId
+			reply.VoteGranted = true
+			reply.Term = rf.currentTerm
+			rf.Time = time.Now()
+			return
+		}
+		if (args.LastLogTerm == rf.log[len(rf.log) - 1].Term &amp;&amp; args.LastLogIndex &gt;= len(rf.log) - 1){
+			rf.VoteFor = args.CandidateId
+			reply.VoteGranted = true
+			reply.Term = rf.currentTerm
+			rf.Time = time.Now()
+			return
+		}
+	}
+	reply.VoteGranted = false
+	reply.Term = rf.currentTerm
+	// rf.Time = time.Now()
+}
+
+//
+// example code to send a RequestVote RPC to a server.
+// server is the index of the target server in rf.peers[].
+// expects RPC arguments in args.
+// fills in *reply with RPC reply, so caller should
+// pass &amp;reply.
+// the types of the args and reply passed to Call() must be
+// the same as the types of the arguments declared in the
+// handler function (including whether they are pointers).
+//
+// The labrpc package simulates a lossy network, in which servers
+// may be unreachable, and in which requests and replies may be lost.
+// Call() sends a request and waits for a reply. If a reply arrives
+// within a timeout interval, Call() returns true; otherwise
+// Call() returns false. Thus Call() may not return for a while.
+// A false return can be caused by a dead server, a live server that
+// can't be reached, a lost request, or a lost reply.
+//
+// Call() is guaranteed to return (perhaps after a delay) *except* if the
+// handler function on the server side does not return.  Thus there
+// is no need to implement your own timeouts around Call().
+//
+// look at the comments in ../labrpc/labrpc.go for more details.
+//
+// if you're having trouble getting RPC to work, check that you've
+// capitalized all field names in structs passed over RPC, and
+// that the caller passes the address of the reply struct with &amp;, not
+// the struct itself.
+//
+func (rf *Raft) sendRequestVote(server int, args *RequestVoteArgs, reply *RequestVoteReply) bool {
+	ok := rf.peers[server].Call("Raft.RequestVote", args, reply)
+	return ok
+}
+
+
+//
+// the service using Raft (e.g. a k/v server) wants to start
+// agreement on the next command to be appended to Raft's log. if this
+// server isn't the leader, returns false. otherwise start the
+// agreement and return immediately. there is no guarantee that this
+// command will ever be committed to the Raft log, since the leader
+// may fail or lose an election. even if the Raft instance has been killed,
+// this function should return gracefully.
+//
+// the first return value is the index that the command will appear at
+// if it's ever committed. the second return value is the current
+// term. the third return value is true if this server believes it is
+// the leader.
+//
+func (rf *Raft) Start(command interface{}) (int, int, bool) {
+	index := -1
+	term := -1
+	isLeader := true
+
+	// Your code here (2B).
+	rf.mu.Lock()
+	defer rf.mu.Unlock()
+	if rf.state != Leader {
+		isLeader = false
+		return index, term, isLeader
+	}
+	// append command to rf.log.
+	new_log := LogEntry{}
+	new_log.Term = rf.currentTerm
+	new_log.Command = command
+	rf.log = append(rf.log,new_log) // append new command to local log.
+	index = len(rf.log) - 1
+	term = rf.currentTerm
+	rf.matchIndex[rf.me] = index
+	
+	rf.nextIndex[rf.me] = index + 1
+	for i:= 0;i &lt; len(rf.peers);i++{
+		rf.nextIndex[i] = rf.nextIndex[rf.me]
+	}
+	return index, term, isLeader
+}
+
+//
+// the tester doesn't halt goroutines created by Raft after each test,
+// but it does call the Kill() method. your code can use killed() to
+// check whether Kill() has been called. the use of atomic avoids the
+// need for a lock.
+//
+// the issue is that long-running goroutines use memory and may chew
+// up CPU time, perhaps causing later tests to fail and generating
+// confusing debug output. any goroutine with a long-running loop
+// should call killed() to check whether it should stop.
+//
+func (rf *Raft) Kill() {
+	atomic.StoreInt32(&amp;rf.dead, 1)
+	// Your code here, if desired.
+	for {
+		if rf.killed() {
+			break
+		}
+		time.Sleep(time.Duration(rand.Intn(100)) * time.Millisecond)
+	}
+}
+
+func (rf *Raft) killed() bool {
+	z := atomic.LoadInt32(&amp;rf.dead)
+	return z == 1
+}
+
+func (rf *Raft) convertToLeader() {
+	rf.state = Leader
+	rf.Time = time.Now()
+	// (2B.)
+	// initialization. (nextIndex and matchIndex.)
+	rf.nextIndex = make([]int,len(rf.peers))
+	rf.matchIndex = make([]int,len(rf.peers))
+	rf.nextIndex[rf.me] = len(rf.log)
+	for i:= 0;i &lt; len(rf.peers);i++{
+		rf.nextIndex[i] = rf.nextIndex[rf.me]
+	}
+	DPrintf("%d, become a leader",rf.me)
+}
+func (rf *Raft) convertToCandidate(){
+	rf.currentTerm++
+	rf.VoteFor = rf.me
+	rf.Time = time.Now()
+	rf.state = Candidate
+	rf.VoteCount = 1;
+	go rf.getVote()
+	DPrintf("%d, become a candidate",rf.me)
+}
+// send to other server except the candidate server.
+func (rf *Raft) getVote(){
+	rf.mu.Lock()
+	args := RequestVoteArgs{
+		Term: rf.currentTerm,
+		CandidateId : rf.me,
+		LastLogIndex: len(rf.log) - 1,
+		LastLogTerm: rf.log[len(rf.log) - 1].Term,
+	}
+	// (2B. log replication)
+	rf.mu.Unlock()
+	for i := 0;i &lt; len(rf.peers);i++{
+		if i != rf.me {
+			go func(index int){
+				reply := RequestVoteReply{}
+				ok := rf.sendRequestVote(index,&amp;args,&amp;reply)
+				if !ok {
+					return
+				}
+				rf.mu.Lock()
+				if reply.VoteGranted {
+					rf.VoteCount++
+				} 
+				if rf.VoteCount &gt; len(rf.peers) / 2{
+					rf.convertToLeader()
+				}
+				rf.mu.Unlock()
+			}(i)
+		}
+	}
+}
+func (rf *Raft) convertToFollower(){
+	rf.state = Follower
+	rf.VoteFor = -1
+	// (2B.) also need a way to delete nextIndex and matchIndex.
+	//  my code:
+	// rf.nextIndex = nil
+	// rf.matchIndex = nil
+	DPrintf("%d, become a follower",rf.me)
+}
+// heartbeat. empty AppendEntries to keep authority.
+func (rf *Raft) heartbeat(){
+	rf.Time = time.Now()
+	// initialization args.
+	if rf.state != Leader {
+		return
+	}
+	for i := 0;i &lt; len(rf.peers);i++{
+		if i != rf.me{
+			go func(index int) {
+				rf.mu.Lock()
+				if rf.state != Leader {
+					rf.mu.Unlock()
+					return
+				}
+				PrevLogIndex := rf.nextIndex[index] - 1
+				args := AppendEntriesArgs{
+					Term : rf.currentTerm,
+					LeaderId : rf.me,
+					PrevLogIndex :PrevLogIndex,
+					PrevLogTerm : rf.log[PrevLogIndex].Term,
+					Entries : rf.log[PrevLogIndex + 1:],
+					LeaderCommit : rf.commitIndex,
+				}
+				rf.mu.Unlock()
+				if rf.state != Leader {
+					return
+				}
+				reply := AppendEntriesReply{}
+				ok := rf.sendAppendEntries(index,&amp;args,&amp;reply)
+				if !ok {
+					return
+				}
+				rf.mu.Lock()
+				if reply.Success {
+					rf.matchIndex[index] = args.PrevLogIndex + len(args.Entries)
+            		rf.nextIndex[index] = rf.matchIndex[index] + 1
+
+					// check if replicated on majority of servers.
+					for N := len(rf.log) - 1; N &gt; rf.commitIndex;N--{
+						num := 0
+						for j:= 0;j &lt; len(rf.peers);j++{
+							if rf.matchIndex[j] &gt;= N{
+								num++;
+							}
+							if num &gt; len(rf.peers) / 2 {
+								rf.Commit(N)
+								break
+							}
+						}
+					}
+				} else {
+					if reply.Term &gt; rf.currentTerm {
+						rf.currentTerm = reply.Term
+						rf.convertToFollower()
+					} else {
+						if rf.nextIndex[index] &gt; 1 {
+							rf.nextIndex[index] = args.PrevLogIndex
+						}
+					}
+				}
+				rf.mu.Unlock()
+			}(i)
+		}
+	}
+}
+func (rf *Raft) Commit(N int){
+	rf.commitIndex = N
+	for i := rf.lastApplied + 1;i &lt;= rf.commitIndex;i++{
+		msg := ApplyMsg{
+			CommandValid : true,
+			Command : rf.log[i].Command,
+			CommandIndex : i,
+		}
+		rf.lastApplied  = i
+		rf.applyCh &lt;- msg
+	}
+}
+func (rf *Raft) LeaderElection(){
+	for {
+		rf.mu.Lock()
+		DPrintf("%d, %v",rf.me,rf.log)
+		// DPrintf("%d,  state: %d",rf.me,rf.state)
+		// DPrintf("%d, VoteFor: %d, state: %d",rf.me,rf.VoteFor,rf.state)
+		switch rf.state {
+		case Follower:
+			if int(time.Since(rf.Time) /time.Millisecond) &gt; rf.Timeout{
+				rf.convertToCandidate()
+			}
+			rf.mu.Unlock()
+		case Candidate:
+			if int(time.Since(rf.Time) /time.Millisecond) &gt; rf.Timeout {
+				rf.currentTerm++
+				rf.Timeout = rand.Intn(150) + 150
+				go rf.getVote()
+			}
+			rf.mu.Unlock()
+		case Leader:
+			rf.heartbeat()
+			go rf.mu.Unlock()
+		}
+
+		time.Sleep(time.Duration(rand.Intn(100)) * time.Millisecond)
+	}
+}
+//
+// the service or tester wants to create a Raft server. the ports
+// of all the Raft servers (including this one) are in peers[]. this
+// server's port is peers[me]. all the servers' peers[] arrays
+// have the same order. persister is a place for this server to
+// save its persistent state, and also initially holds the most
+// recent saved state, if any. applyCh is a channel on which the
+// tester or service expects Raft to send ApplyMsg messages.
+// Make() must return quickly, so it should start goroutines
+// for any long-running work.
+//
+func Make(peers []*labrpc.ClientEnd, me int,
+	persister *Persister, applyCh chan ApplyMsg) *Raft {
+	rf := &amp;Raft{}
+	rf.peers = peers
+	rf.persister = persister
+	rf.me = me
+	
+	// Your initialization code here (2A, 2B, 2C).
+	// (2A). Start.
+	// rand.Seed(time.Now().Unix()) // 
+	rf.state = Follower
+	rf.currentTerm = 0
+	rf.VoteFor = -1
+	rf.Time = time.Now()
+	rf.Timeout = rand.Intn(150) + 150
+	// 2B initialization.
+	first_log := LogEntry{Term : -1}
+	rf.log = append(rf.log,first_log)
+	rf.commitIndex = 0
+	rf.lastApplied = 0
+	rf.applyCh = applyCh
+	// background goroutine.
+	go rf.LeaderElection()
+	// (2A) end
+	// initialize from state persisted before a crash
+	rf.readPersist(persister.ReadRaftState())
+	return rf
+}
+</pre></table></code></div></div></div><div class="post-tail-wrapper text-muted"><div class="post-meta mb-3"> <i class="far fa-folder-open fa-fw mr-1"></i> <a href='/categories/distributed-system/'>Distributed System</a></div><div class="post-tags"> <i class="fa fa-tags fa-fw mr-1"></i> <a href="/tags/distributed-system/" class="post-tag no-text-decoration" >Distributed System</a> <a href="/tags/raft/" class="post-tag no-text-decoration" >Raft</a></div><div class="post-tail-bottom d-flex justify-content-between align-items-center mt-3 pt-5 pb-2"><div class="license-wrapper"> This post is licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> by the author.</div><div class="share-wrapper"> <span class="share-label text-muted mr-1">Share</span> <span class="share-icons"> <a href="https://twitter.com/intent/tweet?text=6.824 Lab2B - HelloMike&url=https://cheng1621.github.io/posts/6824-lab2B/" data-toggle="tooltip" data-placement="top" title="Twitter" target="_blank" rel="noopener" aria-label="Twitter"> <i class="fa-fw fab fa-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=6.824 Lab2B - HelloMike&u=https://cheng1621.github.io/posts/6824-lab2B/" data-toggle="tooltip" data-placement="top" title="Facebook" target="_blank" rel="noopener" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://telegram.me/share?text=6.824 Lab2B - HelloMike&url=https://cheng1621.github.io/posts/6824-lab2B/" data-toggle="tooltip" data-placement="top" title="Telegram" target="_blank" rel="noopener" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <i class="fa-fw fas fa-link small" onclick="copyLink()" data-toggle="tooltip" data-placement="top" title="Copy link"></i> </span></div></div></div></div></div><div id="panel-wrapper" class="col-xl-3 pl-2 text-muted topbar-down"><div class="access"><div id="access-lastmod" class="post"> <span>Recent Update</span><ul class="post-content pl-0 pb-1 ml-1 mt-2"><li><a href="/posts/computerNetworkNote/">Computernetworknote</a><li><a href="/posts/LargeScaleEngineering_paper2/">TiDB & its community</a><li><a href="/posts/LargeScaleEngineering_Paper1/">Waterfall vs Agile</a><li><a href="/posts/Zookeeper/">ZooKeeper Note</a><li><a href="/posts/raft/">Raft note</a></ul></div><div id="access-tags"> <span>Trending Tags</span><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/distributed-system/">Distributed System</a> <a class="post-tag" href="/tags/raft/">Raft</a> <a class="post-tag" href="/tags/large-scale-software-engineering/">Large Scale Software Engineering</a> <a class="post-tag" href="/tags/aurora/">Aurora</a> <a class="post-tag" href="/tags/craq/">CRAQ</a> <a class="post-tag" href="/tags/kvservice/">kvservice</a> <a class="post-tag" href="/tags/mapreduce/">MapReduce</a> <a class="post-tag" href="/tags/mit-6828/">MIT 6828</a> <a class="post-tag" href="/tags/os/">OS</a> <a class="post-tag" href="/tags/paper1/">paper1</a></div></div></div><div id="toc-wrapper" class="pl-0 pr-4 mb-5"> <span class="pl-3 pt-2 mb-2">Contents</span><nav id="toc" data-toggle="toc"></nav></div></div></div><div class="row"><div class="col-12 col-lg-11 col-xl-8"><div id="post-extend-wrapper" class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-md-4 pr-md-4"><div id="related-posts" class="mt-5 mb-2 mb-sm-4"><h3 class="pt-2 mt-1 mb-4 ml-1" data-toc-skip>Further Reading</h3><div class="card-deck mb-4"><div class="card"> <a href="/posts/6824-lab2C/"><div class="card-body"> <span class="timeago small" > Dec 28, 2020 <i class="unloaded">2020-12-28T21:24:10+08:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>6.824 Lab2C</h3><div class="text-muted small"><p> Summary. I am a new programmer in Go languare. I spent almost 1 month implementing this lab2. Actually, I spent most of the time on debugging, just because I do not know much about Go. For example,...</p></div></div></a></div><div class="card"> <a href="/posts/raft/"><div class="card-body"> <span class="timeago small" > Dec 31, 2020 <i class="unloaded">2020-12-31T17:41:10+08:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Raft note</h3><div class="text-muted small"><p> Why Raft? Paxos can provide correctness and safety, it is capable of reaching agreement on a single decision. However, it is difficult to understand and it does not provide a good foundation for im...</p></div></div></a></div><div class="card"> <a href="/posts/6824-lab2A/"><div class="card-body"> <span class="timeago small" > Dec 5, 2020 <i class="unloaded">2020-12-05T10:59:10+08:00</i> </span><h3 class="pt-0 mt-1 mb-3" data-toc-skip>6.824 Lab2A</h3><div class="text-muted small"><p> Preparation. Raft paper Summary. There is only one leader in Raft algorithm. Leader remains authority through sending AppendEntries to peers. if one peer doesn’t hear from the leader or Candid...</p></div></div></a></div></div></div><div class="post-navigation d-flex justify-content-between"> <a href="/posts/6824-lab2A/" class="btn btn-outline-primary"><p>6.824 Lab2A</p></a> <a href="/posts/6824-lab2C/" class="btn btn-outline-primary"><p>6.824 Lab2C</p></a></div></div></div></div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script> <script type="text/javascript"> const imgs = document.querySelectorAll('#post-wrapper img'); const observer = lozad(imgs); observer.observe(); </script><footer class="d-flex w-100 justify-content-center"><div class="d-flex justify-content-between align-items-center"><div class="footer-left"><p class="mb-0"> © 2021 <a href="https://twitter.com/username">BenchengSu</a>. <span data-toggle="tooltip" data-placement="top" title="Except where otherwise noted, the blog posts on this site are licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) License by the author.">Some rights reserved.</span></p></div><div class="footer-right"><p class="mb-0"> Powered by <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> with <a href="https://github.com/cotes2020/jekyll-theme-chirpy/" target="_blank" rel="noopener">Chirpy</a> theme.</p></div></div></footer></div><div id="search-result-wrapper" class="d-flex justify-content-center unloaded"><div class="col-12 col-xl-11 post-content"><div id="search-hints"><h4 class="text-muted mb-4">Trending Tags</h4><a class="post-tag" href="/tags/distributed-system/">Distributed System</a> <a class="post-tag" href="/tags/raft/">Raft</a> <a class="post-tag" href="/tags/large-scale-software-engineering/">Large Scale Software Engineering</a> <a class="post-tag" href="/tags/aurora/">Aurora</a> <a class="post-tag" href="/tags/craq/">CRAQ</a> <a class="post-tag" href="/tags/kvservice/">kvservice</a> <a class="post-tag" href="/tags/mapreduce/">MapReduce</a> <a class="post-tag" href="/tags/mit-6828/">MIT 6828</a> <a class="post-tag" href="/tags/os/">OS</a> <a class="post-tag" href="/tags/paper1/">paper1</a></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><div id="mask"></div><a id="back-to-top" href="#" aria-label="back-to-top" class="btn btn-lg btn-box-shadow" role="button"> <i class="fas fa-angle-up"></i> </a> <script src="https://cdn.jsdelivr.net/npm/simple-jekyll-search@1.7.3/dest/simple-jekyll-search.min.js"></script> <script> SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<div class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-lg-4 pr-lg-4 pl-xl-0 pr-xl-0"> <a href="https://cheng1621.github.io{url}">{title}</a><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"><div class="mr-sm-4"><i class="far fa-folder fa-fw"></i>{categories}</div><div><i class="fa fa-tag fa-fw"></i>{tags}</div></div><p>{snippet}</p></div>', noResultsText: '<p class="mt-5">Oops! No result founds.</p>' }); </script> <script async src="https://www.googletagmanager.com/gtag/js?id="></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', ''); </script>
